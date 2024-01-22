@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Interfaz_Móvil" parent="Theme.Material3.DayNight.NoActionBar">
+
+    </style>
+
+    <style name="CustomToolbarThemeOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <!-- Override other menu item styles if needed -->
+    </style>
+
+
+    <style name="Theme.Interfaz_Móvil" parent="Base.Theme.Interfaz_Móvil" />
+</resources>
