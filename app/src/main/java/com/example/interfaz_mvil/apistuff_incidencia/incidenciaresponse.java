@@ -1,4 +1,4 @@
-package com.example.interfaz_mvil.apistuff;
+package com.example.interfaz_mvil.apistuff_incidencia;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,5 +13,12 @@ public class incidenciaresponse {
 
     public List<incidencia> getIncidencias() {
         return incidences;
+    }
+
+    @SerializedName("totalPages")
+    private int totalPages;
+
+    public int getTotalPages() {
+        return totalPages;
     }
 }

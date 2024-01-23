@@ -8,7 +8,6 @@
         android:id="@+id/textViewItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Incidencia"
+        android:text="Camara"
         android:textSize="18sp" />
-
 </LinearLayout>

@@ -8,5 +8,6 @@
     <string name="login_button">Siguiente</string>
     <string name="forgot_password">No recuerdo mi contraseña</string>
     <string name="register">Registro</string>
+    <string name="title_activity_maps">MapsActivity</string>
 
 </resources>

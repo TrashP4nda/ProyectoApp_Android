@@ -1,4 +1,4 @@
-package com.example.interfaz_mvil.recyclerview;
+package com.example.interfaz_mvil.recyclerview_incidencias;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,24 +10,23 @@ import com.example.interfaz_mvil.R;
 
 import java.util.List;
 
-import com.example.interfaz_mvil.apistuff.incidencia;
-import com.example.interfaz_mvil.recyclerview.ViewHolder;
+import com.example.interfaz_mvil.apistuff_incidencia.incidencia;
 
-public class Adapter extends RecyclerView.Adapter<ViewHolder> {
+public class Adapter_incidencias extends RecyclerView.Adapter<ViewHolder_incidencias> {
     private List<incidencia> items;
 
-    public Adapter(List<incidencia> items) {
+    public Adapter_incidencias(List<incidencia> items) {
         this.items = items;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder_incidencias onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.incidencia ,parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder_incidencias(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder_incidencias holder, int position) {
         incidencia item = items.get(position);
         holder.textView.setText("ID Incidencia : " + item.getIncidenceId());
     }

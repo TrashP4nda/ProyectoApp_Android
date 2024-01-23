@@ -8,13 +8,16 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 
-import com.example.interfaz_mvil.apistuff.ApiService;
-import com.example.interfaz_mvil.apistuff.incidencia;
-import com.example.interfaz_mvil.apistuff.incidenciaresponse;
-import com.example.interfaz_mvil.recyclerview.Adapter;
+import com.example.interfaz_mvil.apistuff_incidencia.ApiService_incidencia;
+import com.example.interfaz_mvil.apistuff_incidencia.incidencia;
+import com.example.interfaz_mvil.apistuff_incidencia.incidenciaresponse;
+import com.example.interfaz_mvil.recyclerview_incidencias.Adapter_incidencias;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,42 +31,57 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Incidencias extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private Adapter adapter;
+    private Adapter_incidencias adapterIncidencias;
     private List<incidencia> items;
 
+    private Spinner paginas;
     private Button filtrarporfechas;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incidencias);
 
-
+        Spinner paginas = findViewById(R.id.spinner_paginas);
         filtrarporfechas = findViewById(R.id.filtrarporfecha);
         recyclerView = findViewById(R.id.recycler_incidencias);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         items = new ArrayList<>();
+
+
+
+        List<String> spinnerData = new ArrayList<>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerData);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        
+
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.euskadi.eus/traffic/v1.0/") // Replace with your base URL
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ApiService apiService = retrofit.create(ApiService.class);
+        ApiService_incidencia apiServiceIncidencia = retrofit.create(ApiService_incidencia.class);
 
 
-        adapter = new Adapter(items);
-        recyclerView.setAdapter(adapter);
+        adapterIncidencias = new Adapter_incidencias(items);
+        recyclerView.setAdapter(adapterIncidencias);
 
-       apiService.getTrafficIncidences().enqueue(new Callback<incidenciaresponse>() {
+       apiServiceIncidencia.getTrafficIncidences(1).enqueue(new Callback<incidenciaresponse>() {
             @Override
             public void onResponse(Call<incidenciaresponse> call, Response<incidenciaresponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     // Assuming incidenciaresponse has a method getIncidencias() that returns a List<Incidencia>
                     List<incidencia> incidences = response.body().getIncidencias();
 
-                   adapter.setData(incidences);
+                   adapterIncidencias.setData(incidences);
 
+                    for (int i = 1; i <= response.body().getTotalPages(); i++) {
+                        spinnerData.add(String.valueOf(i));
+                    }
+                   paginas.setAdapter(adapter);
 
                 } else {
                     // Handle the case where the response was not successful
@@ -96,14 +114,14 @@ public class Incidencias extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                apiService.getTrafficIncidencesByDate(String.valueOf(dayOfMonth),String.valueOf(month),String.valueOf(year)).enqueue(new Callback<incidenciaresponse>() {
+                                apiServiceIncidencia.getTrafficIncidencesByDate(String.valueOf(dayOfMonth),String.valueOf(month),String.valueOf(year)).enqueue(new Callback<incidenciaresponse>() {
                                     @Override
                                     public void onResponse(Call<incidenciaresponse> call, Response<incidenciaresponse> response) {
                                         if (response.isSuccessful() && response.body() != null) {
                                             // Assuming incidenciaresponse has a method getIncidencias() that returns a List<Incidencia>
                                             List<incidencia> incidences = response.body().getIncidencias();
 
-                                            adapter.setData(incidences);
+                                            adapterIncidencias.setData(incidences);
 
 
                                         } else {
@@ -127,6 +145,43 @@ public class Incidencias extends AppCompatActivity {
 
 
 
+
+        paginas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                apiServiceIncidencia.getTrafficIncidences(position+1).enqueue(new Callback<incidenciaresponse>() {
+                    @Override
+                    public void onResponse(Call<incidenciaresponse> call, Response<incidenciaresponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            // Assuming incidenciaresponse has a method getIncidencias() that returns a List<Incidencia>
+                            List<incidencia> incidences = response.body().getIncidencias();
+
+                            adapterIncidencias.setData(incidences);
+                            Log.e("asdasdawdas","asdasdasdasdFASHFOASFOAISNJFNOSANM");
+
+
+                        } else {
+                            // Handle the case where the response was not successful
+                            Log.e("API Error", "Response not successful: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<incidenciaresponse> call, Throwable t) {
+                        // Handle the case where the request failed to execute
+                        Log.e("API Error", "Request failed", t);
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing if nothing is selected
+            }
+        });
 
 
 

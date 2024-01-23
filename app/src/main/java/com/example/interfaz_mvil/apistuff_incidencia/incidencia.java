@@ -1,4 +1,4 @@
-package com.example.interfaz_mvil.apistuff;
+package com.example.interfaz_mvil.apistuff_incidencia;
 
 import com.google.gson.annotations.SerializedName;
 

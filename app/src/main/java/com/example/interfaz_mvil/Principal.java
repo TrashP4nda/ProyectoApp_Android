@@ -10,6 +10,8 @@ import android.view.MenuItem;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.interfaz_mvil.mapa.MapsActivity;
+
 public class Principal extends AppCompatActivity {
 
     @Override
@@ -45,7 +47,14 @@ public class Principal extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(),Incidencias.class);
             startActivity(intent);
             return true;
-        }
+        }else if (id == R.id.item3) {
+            Intent intent = new Intent(getApplicationContext(),Camaras.class);
+            startActivity(intent);
+            return true;}
+        else if (id == R.id.item4) {
+            Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+            startActivity(intent);
+            return true;}
         // Add more conditions for other menu items as needed
 
         return super.onOptionsItemSelected(item);
