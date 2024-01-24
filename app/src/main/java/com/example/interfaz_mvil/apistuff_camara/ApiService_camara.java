@@ -13,6 +13,9 @@ public interface ApiService_camara {
     @GET("cameras")
     Call<camararesponse> getCameras(@Query("_page") int page);
 
+    @GET("cameras/byLocation/{lat}/{lon}/{km}")
+    Call<camararesponse> getCamerasByLocation(@Path("lat") double lat,@Path("lon") double lon,@Path("km") int km);
+
 
    // @GET("incidences/byDate/{year}/{month}/{day}")
    // Call<incidenciaresponse> getTrafficIncidencesByDate(@Path("day") String day,@Path("month") String month,@Path("year") String year);
