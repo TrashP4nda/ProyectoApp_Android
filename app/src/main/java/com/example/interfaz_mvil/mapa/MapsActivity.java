@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.interfaz_mvil.databinding.ActivityMapsBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -65,8 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Initialize FusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        getSurroundingCameras();
-        getSurroundingIncidencesByDateAndLocation();
+
     }
 
 
@@ -75,7 +75,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(this));
 
-
+        getSurroundingCameras();
+        getSurroundingIncidencesByDateAndLocation();
 
 
     }
@@ -108,20 +109,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.addMarker(myLocationMarker);
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),10));
-                    apiServiceCamera.getCamerasByLocation(latitude,longitude,5).enqueue(new Callback<camararesponse>() {
+                    apiServiceCamera.getCamerasByLocation(latitude,longitude,50).enqueue(new Callback<camararesponse>() {
                         @Override
                         public void onResponse(Call<camararesponse> call, Response<camararesponse> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 List<camara> cameras = response.body().getCamaras();
                                 for (camara camera : cameras) {
-                                    Log.e("pito",camera.getCameraId());
-                                    MarkerOptions markerOptions = new MarkerOptions()
-                                            .position(new LatLng(Float.parseFloat(camera.getLatitude()), Float.parseFloat(camera.getLongitude())))
-                                            .title(camera.getCameraName()) // Ensure this is not null
-                                            .snippet(camera.getUrlImage())
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)); // Custom icon for camera
+                                    Log.e("pito",camera.getCameraName() + "ID" + camera.getCameraId());
 
-                                    mMap.addMarker(markerOptions);
+                                    mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(Float.parseFloat(camera.getLatitude()), Float.parseFloat(camera.getLongitude())))
+                                            .title(camera.getCameraName() + " Cam : " + camera.getCameraId()) // Ensure this is not null
+                                            .snippet(camera.getUrlImage())
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))); // Custom icon for camera);
                                 }
 
                             } else {

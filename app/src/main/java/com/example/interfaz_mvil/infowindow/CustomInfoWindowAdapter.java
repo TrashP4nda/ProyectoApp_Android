@@ -48,10 +48,26 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         String snippet = marker.getSnippet();
         TextView snippetUi = view.findViewById(R.id.info_window_snippet);
-
-        if (snippet != null && snippet.startsWith("http") || snippet !=null && snippet.startsWith("https")) {
+        if (snippet != null && (snippet.startsWith("http") || snippet.startsWith("https"))) {
             // Load the image for camera markers
-            Picasso.get().load(snippet).error(R.drawable.no_disponible).placeholder(R.drawable.no_disponible).into(image);
+            Picasso.get().load(snippet).error(R.drawable.no_disponible).placeholder(R.drawable.no_disponible)
+                    .into(image, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            if (marker != null && marker.isInfoWindowShown()) {
+                                // Refresh the marker's info window if it's already shown
+                                marker.hideInfoWindow();
+                                marker.showInfoWindow();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            // Log or handle the error scenario
+                            Log.e("Picasso Error", "Error loading image: " + e.getMessage());
+                            image.setVisibility(View.GONE); // Hide the image view on error
+                        }
+                    });
             // Hide the snippet text view for camera markers
             snippetUi.setVisibility(View.GONE);
         } else {
