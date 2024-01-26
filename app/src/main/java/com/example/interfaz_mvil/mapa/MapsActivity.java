@@ -109,19 +109,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.addMarker(myLocationMarker);
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),10));
-                    apiServiceCamera.getCamerasByLocation(latitude,longitude,50).enqueue(new Callback<camararesponse>() {
+                    apiServiceCamera.getCamerasByLocation(latitude,longitude,5).enqueue(new Callback<camararesponse>() {
                         @Override
                         public void onResponse(Call<camararesponse> call, Response<camararesponse> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 List<camara> cameras = response.body().getCamaras();
                                 for (camara camera : cameras) {
-                                    Log.e("pito",camera.getCameraName() + "ID" + camera.getCameraId());
 
                                     mMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Float.parseFloat(camera.getLatitude()), Float.parseFloat(camera.getLongitude())))
                                             .title(camera.getCameraName() + " Cam : " + camera.getCameraId()) // Ensure this is not null
                                             .snippet(camera.getUrlImage())
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))); // Custom icon for camera);
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))); // Custom icon for camera;
                                 }
 
                             } else {
@@ -180,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 for (incidencia incidencia : incidencias) {
                                     MarkerOptions markerOptions = new MarkerOptions()
                                             .position(new LatLng(Float.parseFloat(incidencia.getLatitude()), Float.parseFloat(incidencia.getLongitude())))
-                                            .title(incidencia.getIncidenceType()) // Ensure this is not null
+                                            .title(incidencia.getIncidenceType() + " ID: " + incidencia.getIncidenceId()) // Ensure this is not null
                                             .snippet(incidencia.getCause())
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)); // Custom icon for incidencia
 

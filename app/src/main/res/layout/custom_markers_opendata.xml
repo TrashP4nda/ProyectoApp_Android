@@ -8,20 +8,26 @@
 
     <ImageView
         android:id="@+id/info_window_image"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/info_window_title"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:text="Titulo"/>
 
     <TextView
         android:id="@+id/info_window_snippet"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="Content"/>
+
+    <Button
+        android:id="@+id/favoritosBotonVentana"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="+Favoritos" />
 </LinearLayout>

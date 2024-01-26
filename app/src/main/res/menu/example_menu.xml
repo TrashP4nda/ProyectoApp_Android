@@ -7,25 +7,26 @@
         android:id="@+id/item1"
         android:title="Mi perfil"
         app:showAsAction="never"
-
         />
     <item
         android:id="@+id/item2"
         android:title="Incidencias"
         app:showAsAction="never"
-
         />
     <item
         android:id="@+id/item3"
         android:title="Cámaras"
         app:showAsAction="never"
-
         />
     <item
         android:id="@+id/item4"
-        android:title="Añadir a Favoritos"
+        android:title="Acceder al Mapa"
         app:showAsAction="never"
-
+        />
+    <item
+        android:id="@+id/item5"
+        android:title="Mis Favoritos"
+        app:showAsAction="never"
         />
 
 </menu>

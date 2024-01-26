@@ -14,16 +14,20 @@ import com.example.interfaz_mvil.mapa.MapsActivity;
 
 public class Principal extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+
+        String Username = intent.getStringExtra("Username");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
-
-
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Titulito");
+        toolbar.setTitle(Username);
         toolbar.setNavigationIcon(R.drawable.ic_launcher_foreground);
         setSupportActionBar(toolbar);
+
     }
 
 
@@ -39,9 +43,14 @@ public class Principal extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+
+
         // Check which menu item was clicked based on its ID
         if (id == R.id.item1) {
-
+            Intent intent = new Intent(getApplicationContext(),Perfil.class);
+            Intent intent2 = getIntent();
+            intent.putExtra("UserID",intent2.getStringExtra("UserID"));
+            startActivity(intent);
             return true;
         } else if (id == R.id.item2) {
             Intent intent = new Intent(getApplicationContext(),Incidencias.class);

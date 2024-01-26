@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.login_username);
         password = findViewById(R.id.password_login);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:5009/api/") // Replace with your base URL
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.134:5009/api/") // Replace with your base URL
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
 
@@ -64,26 +64,30 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<tokenresponse> call, Response<tokenresponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             tokenresponse tokenResponse = response.body();
+                            user userObject = tokenResponse.getUserObject();
 
-                            if (tokenResponse.getToken() != null) {
+                            if (tokenResponse.getToken() != null && userObject != null) {
                                 String token = tokenResponse.getToken();
 
 
 
-                               // Example using SharedPreferences:
                                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", getApplicationContext().MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("token", token);
+                                editor.putString("CurrentLoggedUser", userObject.getId());
                                 editor.apply();
 
+
                                 Intent intent = new Intent(getApplicationContext(),Principal.class);
+                                intent.putExtra("UserID", userObject.getId());
+                                intent.putExtra("Username", userObject.getUsername());
                                 startActivity(intent);
 
-                                // Now you can use the token for future API requests
-                                // e.g., pass it in the "Authorization" header as shown in previous responses
+
                             }
                         } else {
-                            Log.e("API Error", String.valueOf(Log.e("URL", call.request().url().toString())));
+                            Log.e("API Error","Response not successful: " + response.code() + " " + call.request());
+
                         }
                     }
 

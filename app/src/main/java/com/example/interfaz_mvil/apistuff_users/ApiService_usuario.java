@@ -15,6 +15,8 @@ public interface ApiService_usuario {
     @GET("usuarios")
     Call<List<user>> getUsuarios(@Header("Authorization") String bearertoken);
 
+    @GET("usuarios/{id}")
+    Call<user> getUserByID(@Header("Authorization") String bearertoken , @Path("id") String id);
 
 
 

@@ -4,6 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class user {
 
+    public String getId() {
+        return id;
+    }
+
     @SerializedName("id")
     private String id;
     @SerializedName("username")
