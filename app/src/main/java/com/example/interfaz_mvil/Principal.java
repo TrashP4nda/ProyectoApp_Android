@@ -64,6 +64,10 @@ public class Principal extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
             return true;}
+        else if (id == R.id.item5) {
+            Intent intent = new Intent(getApplicationContext(), Favoritos.class);
+            startActivity(intent);
+            return true;}
         // Add more conditions for other menu items as needed
 
         return super.onOptionsItemSelected(item);

@@ -59,7 +59,7 @@ public class Camaras extends AppCompatActivity {
         ApiService_camara apiServiceCamera = retrofit.create(ApiService_camara.class);
 
 
-        adapterCamaras = new Adapter_camaras(items);
+        adapterCamaras = new Adapter_camaras(this,items);
         recyclerView.setAdapter(adapterCamaras);
 
         List<String> spinnerData = new ArrayList<>();

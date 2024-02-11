@@ -66,7 +66,7 @@ public class Incidencias extends AppCompatActivity {
         ApiService_incidencia apiServiceIncidencia = retrofit.create(ApiService_incidencia.class);
 
 
-        adapterIncidencias = new Adapter_incidencias(items);
+        adapterIncidencias = new Adapter_incidencias(this,items);
         recyclerView.setAdapter(adapterIncidencias);
 
        apiServiceIncidencia.getTrafficIncidences(1).enqueue(new Callback<incidenciaresponse>() {

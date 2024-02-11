@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Camera;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.interfaz_mvil.R;
+import com.example.interfaz_mvil.apistuff_camara.camara;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.squareup.picasso.Callback;
@@ -45,7 +47,8 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
 
 
-
+        String snippet = marker.getSnippet();
+        TextView snippetUi = view.findViewById(R.id.info_window_snippet);
 
         Button favoritos = view.findViewById(R.id.favoritosBotonVentana);
 
@@ -53,6 +56,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
             // Spannable string allows us to edit the formatting of the text.
             SpannableString titleText = new SpannableString(title);
             titleUi.setText(titleText);
+
         }else if(title.equals("Mi posición")){
             SpannableString titleText = new SpannableString(title);
             titleUi.setText(titleText);
@@ -64,12 +68,10 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
 
 
-
-        String snippet = marker.getSnippet();
-        TextView snippetUi = view.findViewById(R.id.info_window_snippet);
-
         if (snippet != null && (snippet.startsWith("http") || snippet.startsWith("https"))) {
             // Load the image for camera markers
+
+
             Picasso.get().load(snippet).error(R.drawable.no_disponible).placeholder(R.drawable.no_disponible)
                     .into(image, new Callback() {
                         @Override
@@ -97,13 +99,6 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
             SpannableString snippetText = new SpannableString(snippet);
             snippetUi.setText(snippetText);
         }
-
-
-        String[] pito = title.split(" ");
-        String itemID = pito[pito.length-1];
-
-        SharedPreferences sharedPreferences =  view.getContext().getSharedPreferences("MyPrefs", view.getContext().MODE_PRIVATE);
-        String UserID = sharedPreferences.getString("CurrentLoggedUser",null);
 
 
 

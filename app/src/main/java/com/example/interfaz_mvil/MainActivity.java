@@ -33,7 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
-    private Button boton;
+    private Button boton,register;
     private TextInputEditText username;
     private EditText password;
 
@@ -45,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
         boton = findViewById(R.id.boton_login);
         username = findViewById(R.id.login_username);
         password = findViewById(R.id.password_login);
+        register = findViewById(R.id.register);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.134:5009/api/") // Replace with your base URL
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/") // Replace with your base URL
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
 
@@ -99,6 +100,19 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
+            }
+        });
+
+
+
+
+
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Register.class);
+                startActivity(intent);
             }
         });
     }

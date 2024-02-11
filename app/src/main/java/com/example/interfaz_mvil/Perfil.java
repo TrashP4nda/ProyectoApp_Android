@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ public class Perfil extends AppCompatActivity {
     private EditText pasguord;
     private TextView Username;
     private Button editar;
+    private user user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class Perfil extends AppCompatActivity {
         String ID = intent.getStringExtra("UserID");
 
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.134:5009/api/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
 
@@ -57,37 +59,14 @@ public class Perfil extends AppCompatActivity {
             @Override
             public void onResponse(Call<user> call, Response<user> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    user usuario = response.body();
-                    Username.setText(usuario.getUsername());
-                    pasguord.setText(usuario.getPasswordHash());
-                    email.setText(usuario.getEmail());
+                    user = response.body();
+                    Username.setText(user.getUsername());
+                    pasguord.setText(user.getPasswordHash());
+                    email.setText(user.getEmail());
 
 
                 } else {
-                    Log.e("API Error", "Error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<user> call, Throwable t) {
-                Log.e("API Error", "Request failed: " + t.getMessage(), t);
-            }
-
-        });
-
-
-        apiServiceToken.getUserByID("Bearer " + token, ID).enqueue(new Callback<user>() {
-            @Override
-            public void onResponse(Call<user> call, Response<user> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    user usuario = response.body();
-                    Username.setText(usuario.getUsername());
-                    pasguord.setText(usuario.getPasswordHash());
-                    email.setText(usuario.getEmail());
-
-
-                } else {
-                    Log.e("API Error", "Error");
+                    Log.e("API Error","Response not successful: " + response.code() + " " + call.request());
                 }
             }
 
@@ -100,6 +79,30 @@ public class Perfil extends AppCompatActivity {
 
 
 
+
+        editar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                apiServiceToken.editUser("Bearer " + token, user.getId(),user.getId(), user.getUsername(),pasguord.getText().toString(),email.getText().toString()).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+
+                        finish();
+
+                        } else {
+                            Log.e("API Error","Response not successful: " + response.code() + " " + call.request());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("API Error", "Request failed: " + t.getMessage(), t);
+                    }
+
+                });
+            }
+        });
 
     }
 }

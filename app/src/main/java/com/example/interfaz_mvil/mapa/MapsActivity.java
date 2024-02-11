@@ -1,10 +1,14 @@
 package com.example.interfaz_mvil.mapa;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -38,6 +42,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -51,6 +56,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.euskadi.eus/traffic/v1.0/") // Replace with your base URL
             .addConverterFactory(GsonConverterFactory.create()).build();
+
+    Retrofit retrofitForCustom = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/usuarios/") // Replace with your base URL
+            .addConverterFactory(GsonConverterFactory.create()).build();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +87,137 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getSurroundingCameras();
         getSurroundingIncidencesByDateAndLocation();
+
+
+        // Inside the onMapReady method or after the map has been initialized
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                // Create an AlertDialog Builder
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle("Confirma la acción");
+
+                String snippet = marker.getSnippet();
+                String title = marker.getTitle();
+
+
+                if (snippet != null && (snippet.startsWith("http") || snippet.startsWith("https") || snippet.contains(".jpg") || snippet.contains(".png"))){
+                    camara cam = (camara) marker.getTag();
+                    builder.setMessage("Quieres añadir " + cam.getCameraName() +  " a favoritos?");
+                }else{
+                    incidencia inc = (incidencia) marker.getTag();
+                    builder.setMessage("Quieres añadir " + inc.getIncidenceName() +  " a favoritos?");
+                }
+
+
+
+                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if (snippet != null && (snippet.startsWith("http") || snippet.startsWith("https") || snippet.contains(".jpg") || snippet.contains(".png"))){
+                            camara cam = (camara) marker.getTag();
+                            ApiService_camara apiServiceCamara = retrofitForCustom.create(ApiService_camara.class);
+                            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", getApplicationContext().MODE_PRIVATE);
+                            String token = sharedPreferences.getString("token",null);
+                            String ID = sharedPreferences.getString("CurrentLoggedUser",null);
+
+
+                            String cameraIdValue = cam != null && cam.getCameraId() != null ? cam.getCameraId() : "";
+                            String addressValue = cam != null && cam.getAddress() != null ? cam.getAddress() : "no address";
+                            String cameraNameValue = cam != null && cam.getCameraName() != null ? cam.getCameraName() : "";
+                            String kilometerValue = cam != null && cam.getKilometer() != null ? cam.getKilometer() : "";
+                            String latitudeValue = cam != null && cam.getLatitude() != null ? cam.getLatitude() : "";
+                            String longitudeValue = cam != null && cam.getLongitude() != null ? cam.getLongitude() : "";
+                            String urlValue = cam != null && cam.getUrlImage() != null ? cam.getUrlImage() : "no disponible";
+                            apiServiceCamara.addCameraAndFavorite("Bearer " + token,ID,cameraIdValue,addressValue,cameraNameValue,kilometerValue,latitudeValue,longitudeValue,urlValue).enqueue(new Callback<Void>() {
+
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                    if (response.isSuccessful()) {
+                                        // Handle the successful response (200 OK)
+                                        Log.d("API Success", call.request().url().toString());
+                                        Log.e("API Errores", call.request().url().toString());
+                                    } else {
+                                        // Handle other HTTP responses like 4xx or 5xx
+                                        Log.e("API Error", "Error Body: " + response.toString());
+                                        Log.e("API Error", call.request().url().toString());
+                                        Log.e("API Error", call.request().toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+                                    // Handle the case where the request failed to execute
+                                    Log.e("API Error", "Request failed", t);
+                                }
+                            });
+
+                        }else{
+
+                            incidencia inc = (incidencia) marker.getTag();
+                            ApiService_incidencia apiServiceIncidencia = retrofitForCustom.create(ApiService_incidencia.class);
+                            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", getApplicationContext().MODE_PRIVATE);
+                            String token = sharedPreferences.getString("token",null);
+                            String ID = sharedPreferences.getString("CurrentLoggedUser",null);
+
+
+                            String autonomousRegionValue = inc != null && inc.getAutonomousRegion() != null ? inc.getAutonomousRegion() : "no value";
+                            String carRegistrationValue = inc != null && inc.getCarRegistration() != null ? inc.getCarRegistration() : "no value";
+                            String causeValue = inc != null && inc.getCause() != null ? inc.getCause() : "no value";
+                            String cityTownValue = inc != null && inc.getCityTown() != null ? inc.getCityTown() : "no value";
+                            String directionValue = inc != null && inc.getDirection() != null ? inc.getDirection() : "no value";
+                            String endDateValue = inc != null && inc.getEndDate() != null ? inc.getEndDate() : "no value";
+                            String incidenceDescriptionValue = inc != null && inc.getIncidenceDescription() != null ? inc.getIncidenceDescription() : "no value";
+                            String incidenceIDValue = inc != null && inc.getIncidenceId() != null ? inc.getIncidenceId() : "no value";
+                            String incidenceLevelValue = inc != null && inc.getIncidenceLevel() != null ? inc.getIncidenceLevel() : "no value";
+
+
+                            apiServiceIncidencia.addIncidenciaAndFavorite("Bearer " + token,ID,autonomousRegionValue,carRegistrationValue,causeValue,cityTownValue,directionValue,endDateValue,incidenceDescriptionValue,incidenceIDValue,incidenceLevelValue).enqueue(new Callback<Void>() {
+
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                    if (response.isSuccessful()) {
+                                        // Handle the successful response (200 OK)
+                                        Log.d("API Success", call.request().url().toString());
+                                        Log.e("API Error", call.request().toString());
+                                    } else {
+                                        // Handle other HTTP responses like 4xx or 5xx
+                                        Log.e("API Error", "Error Body: " + response.toString());
+                                        Log.e("API Error", call.request().url().toString());
+                                        Log.e("API Error", call.request().toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+                                    // Handle the case where the request failed to execute
+                                    Log.e("API Error", "Request failed", t);
+                                }
+                            });
+
+                        }
+
+
+                    }
+                });
+
+                // Add "No" button
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                // Create and show the AlertDialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+
 
 
     }
@@ -116,11 +257,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 List<camara> cameras = response.body().getCamaras();
                                 for (camara camera : cameras) {
 
-                                    mMap.addMarker(new MarkerOptions()
+                                   Marker marker =  mMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Float.parseFloat(camera.getLatitude()), Float.parseFloat(camera.getLongitude())))
                                             .title(camera.getCameraName() + " Cam : " + camera.getCameraId()) // Ensure this is not null
                                             .snippet(camera.getUrlImage())
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))); // Custom icon for camera;
+
+                                    if (marker != null) {
+                                        marker.setTag(camera);
+                                    }
                                 }
 
                             } else {
@@ -183,7 +328,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             .snippet(incidencia.getCause())
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)); // Custom icon for incidencia
 
-                                    mMap.addMarker(markerOptions);
+                                    Marker marker = mMap.addMarker(markerOptions);
+                                    if (marker != null) {
+                                        marker.setTag(incidencia);
+                                    }
                                 }
 
                             } else {

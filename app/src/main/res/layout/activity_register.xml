@@ -57,7 +57,7 @@
         app:layout_constraintVertical_bias="0.295" />
 
     <Button
-        android:id="@+id/boton1"
+        android:id="@+id/registrar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
