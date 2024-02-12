@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import com.example.interfaz_mvil.recyclerview_camaras.Adapter_camaras;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -44,6 +47,15 @@ public class CamarasFavoritas extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+            layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            getWindow().setAttributes(layoutParams);
+        }
+
+
+
         setContentView(R.layout.activity_camaras_favoritas);
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", getApplicationContext().MODE_PRIVATE);
@@ -71,7 +83,7 @@ public class CamarasFavoritas extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     CombinedFavoritesResponse combinedResponse = response.body();
                     List<camara> favoriteCameras = combinedResponse.getFavoriteCameras();
-                    List<incidencia> favoriteIncidencias = combinedResponse.getFavoriteIncidencias();
+
 
                     adapterCamaras.setData(favoriteCameras);
 

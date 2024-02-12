@@ -3,10 +3,12 @@ package com.example.interfaz_mvil;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -21,7 +23,19 @@ public class Principal extends AppCompatActivity {
         Intent intent = getIntent();
 
         String Username = intent.getStringExtra("Username");
+
+
         super.onCreate(savedInstanceState);
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+            layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            getWindow().setAttributes(layoutParams);
+        }
+
+
         setContentView(R.layout.activity_principal);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(Username);

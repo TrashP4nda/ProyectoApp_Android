@@ -10,13 +10,14 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Aplicación Tráfico"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_launcher_custom_1"
+        android:label="TrafficPulse"
+        android:roundIcon="@mipmap/ic_launcher_custom_1"
         android:supportsRtl="true"
         android:theme="@style/Theme.Interfaz_Móvil"
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
+
         <activity
             android:name=".IncidenciasFavoritas"
             android:exported="false" />
