@@ -28,7 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Perfil extends AppCompatActivity {
 
     private TextInputEditText email;
-    private EditText pasguord;
+
     private TextView Username;
     private Button editar;
     private user user = null;
@@ -48,7 +48,7 @@ public class Perfil extends AppCompatActivity {
         setContentView(R.layout.activity_perfil);
 
         email = findViewById(R.id.emailedit);
-        pasguord = findViewById(R.id.editPassword);
+
         Username = findViewById(R.id.NombreUsuario);
         editar= findViewById(R.id.changesButton);
 
@@ -57,7 +57,7 @@ public class Perfil extends AppCompatActivity {
         String ID = intent.getStringExtra("UserID");
 
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.137.1:5009/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
 
@@ -72,7 +72,7 @@ public class Perfil extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
                     Username.setText(user.getUsername());
-                    pasguord.setText(user.getPasswordHash());
+
                     email.setText(user.getEmail());
 
 
@@ -94,7 +94,7 @@ public class Perfil extends AppCompatActivity {
         editar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                apiServiceToken.editUser("Bearer " + token, user.getId(),user.getId(), user.getUsername(),pasguord.getText().toString(),email.getText().toString()).enqueue(new Callback<Void>() {
+                apiServiceToken.editUser("Bearer " + token, user.getId(),user.getId(), user.getUsername(),user.getPasswordHash().toString(),email.getText().toString()).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {

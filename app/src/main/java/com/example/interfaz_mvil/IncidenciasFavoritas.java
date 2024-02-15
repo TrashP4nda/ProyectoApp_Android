@@ -73,7 +73,7 @@ public class IncidenciasFavoritas extends AppCompatActivity {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.136:5009/api/usuarios/") // Replace with your base URL
+                .baseUrl("http://192.168.137.1:5009/api/usuarios/") // Replace with your base URL
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

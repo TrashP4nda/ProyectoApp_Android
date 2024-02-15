@@ -11,12 +11,15 @@
     <string name="paginas">Páginas</string>
     <string name="camaras">Cámaras</string>
     <string name="incidenciasBoton">Incidencias</string>
-    <string name="descripcionintro">Bienvenido a la aplicación , desde el menú de la parte de arriba podrás
+    <string name="descripcionintro">Bienvenido a la aplicación TrafficPulse , desde el menú de la parte de arriba podrás
     seleccionar lo que quieras hacer.\n\n
 
         En el mapa podrás observar las incidencias y cámaras de tráfico en tiempo real.
     Los marcadores color naranja son las incidencias , y los marcadores color rojo las cámaras.\n\n
 
         Tu posición saldrá con un marcador en color azul.
-    El resto es bastante intuitivo , desde perfil podrás cambiar tu correo y contraseña.</string>
+    El resto es bastante intuitivo , desde perfil podrás cambiar tu correo y contraseña. \n\n
+
+        En color verde saldrán las incidencias custom que añada la gente.
+    </string>
 </resources>

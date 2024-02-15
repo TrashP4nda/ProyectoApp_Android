@@ -20,6 +20,9 @@ import com.example.interfaz_mvil.R;
 import com.example.interfaz_mvil.apistuff_camara.ApiService_camara;
 import com.example.interfaz_mvil.apistuff_camara.camara;
 import com.example.interfaz_mvil.apistuff_camara.camararesponse;
+import com.example.interfaz_mvil.apistuff_customIncidencia.ApiService_customIncidencia;
+import com.example.interfaz_mvil.apistuff_customIncidencia.customIncidencia;
+import com.example.interfaz_mvil.apistuff_customIncidencia.customIncidenciaResponse;
 import com.example.interfaz_mvil.apistuff_incidencia.ApiService_incidencia;
 import com.example.interfaz_mvil.apistuff_incidencia.incidencia;
 import com.example.interfaz_mvil.apistuff_incidencia.incidenciaresponse;
@@ -59,8 +62,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.euskadi.eus/traffic/v1.0/") // Replace with your base URL
             .addConverterFactory(GsonConverterFactory.create()).build();
 
-    Retrofit retrofitForCustom = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/usuarios/") // Replace with your base URL
+    Retrofit retrofitForCustom = new Retrofit.Builder().baseUrl("http://192.168.137.1:5009/api/usuarios/") // Replace with your base URL
             .addConverterFactory(GsonConverterFactory.create()).build();
+
+    Retrofit retrofitForCustomIncidencias = new Retrofit.Builder().baseUrl("http://192.168.137.1:5009/api/") // Replace with your base URL
+            .addConverterFactory(GsonConverterFactory.create()).build();
+
 
 
 
@@ -95,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getSurroundingCameras();
         getSurroundingIncidencesByDateAndLocation();
+        getCustomIncidencias();
 
 
         // Inside the onMapReady method or after the map has been initialized
@@ -131,12 +139,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             String ID = sharedPreferences.getString("CurrentLoggedUser",null);
 
 
-                            String cameraIdValue = cam != null && cam.getCameraId() != null ? cam.getCameraId() : "";
+                            String cameraIdValue = cam != null && cam.getCameraId() != null ? cam.getCameraId() : "no value";
                             String addressValue = cam != null && cam.getAddress() != null ? cam.getAddress() : "no address";
-                            String cameraNameValue = cam != null && cam.getCameraName() != null ? cam.getCameraName() : "";
-                            String kilometerValue = cam != null && cam.getKilometer() != null ? cam.getKilometer() : "";
-                            String latitudeValue = cam != null && cam.getLatitude() != null ? cam.getLatitude() : "";
-                            String longitudeValue = cam != null && cam.getLongitude() != null ? cam.getLongitude() : "";
+                            String cameraNameValue = cam != null && cam.getCameraName() != null ? cam.getCameraName() : "no value";
+                            String kilometerValue = cam != null && cam.getKilometer() != null ? cam.getKilometer() : "no value";
+                            String latitudeValue = cam != null && cam.getLatitude() != null ? cam.getLatitude() : "no value";
+                            String longitudeValue = cam != null && cam.getLongitude() != null ? cam.getLongitude() : "no value";
                             String urlValue = cam != null && cam.getUrlImage() != null ? cam.getUrlImage() : "no disponible";
                             apiServiceCamara.addCameraAndFavorite("Bearer " + token,ID,cameraIdValue,addressValue,cameraNameValue,kilometerValue,latitudeValue,longitudeValue,urlValue).enqueue(new Callback<Void>() {
 
@@ -148,7 +156,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         Log.e("API Errores", call.request().url().toString());
                                     } else {
                                         // Handle other HTTP responses like 4xx or 5xx
-                                        Log.e("API Error", "Error Body: " + response.toString());
+                                        try {
+                                            Log.e("API Error", "Error Body: " + response.errorBody().string());
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                        Log.e("API Error", "Error Body: " + response.raw());
                                         Log.e("API Error", call.request().url().toString());
                                         Log.e("API Error", call.request().toString());
                                     }
@@ -330,11 +343,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 List<incidencia> incidencias = response.body().getIncidencias();
                                 for (incidencia incidencia : incidencias) {
+
+
                                     MarkerOptions markerOptions = new MarkerOptions()
                                             .position(new LatLng(Float.parseFloat(incidencia.getLatitude()), Float.parseFloat(incidencia.getLongitude())))
                                             .title(incidencia.getIncidenceType() + " ID: " + incidencia.getIncidenceId()) // Ensure this is not null
                                             .snippet(incidencia.getCause())
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)); // Custom icon for incidencia
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)); // Custom icon for incidencia*
 
                                     Marker marker = mMap.addMarker(markerOptions);
                                     if (marker != null) {
@@ -358,6 +373,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+
+
+    private void getCustomIncidencias() {
+
+        ApiService_customIncidencia apiServiceCustomIncidencias = retrofitForCustomIncidencias.create(ApiService_customIncidencia.class);
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", getApplicationContext().MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+
+        apiServiceCustomIncidencias.getCustomIncidencias("Bearer " + token).enqueue(new Callback<List<customIncidencia>>() {
+            @Override
+            public void onResponse(Call<List<customIncidencia>> call, Response<List<customIncidencia>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    List<customIncidencia> incidencias = response.body(); // Directly use the body as List<customIncidencia>
+                    for (customIncidencia incidencia : incidencias) {
+                        Log.e("incidencia",incidencia.getLatitude());
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(incidencia.getLatitude()), Double.parseDouble(incidencia.getLongitude())))
+                                .title("Custom " + incidencia.getAutonomousRegion()+ " ID: " + incidencia.getIncidenceId()) // Ensure this is not null
+                                .snippet(incidencia.getCause())
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)); // Custom icon for incidencia
+
+                        Marker marker = mMap.addMarker(markerOptions);
+                        if (marker != null) {
+                            marker.setTag(incidencia);
+                        }
+                    }
+
+                } else {
+                    // Handle the case where the response was not successful
+                    Log.e("API Error", "Response not successful: " + response.code() + " " + call.request().url());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<customIncidencia>> call, Throwable t) {
+                // Handle the case where the request failed to execute
+                Log.e("API Error", "Request failed", t);
+            }
+        });
+    }
+
 
 
     @Override

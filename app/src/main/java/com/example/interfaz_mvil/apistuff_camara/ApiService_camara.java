@@ -32,7 +32,7 @@ public interface ApiService_camara {
                                     @Field("Kilometer") String kilometer,
                                     @Field("Latitude") String latitude,
                                     @Field("Longitude") String longitude,
-                                    @Field("url") String url);
+                                    @Field("urlImage") String url);
 
     @GET("{userID}/favorites")
     Call<CombinedFavoritesResponse> getCombinedFavorites(@Header("Authorization") String bearerToken,@Path("userID") String userID);

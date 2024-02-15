@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.password_login);
         register = findViewById(R.id.register);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/") // Replace with your base URL
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.137.1:5009/api/") // Replace with your base URL
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
 

@@ -47,7 +47,7 @@ public class Register extends AppCompatActivity {
         registrar = findViewById(R.id.registrar);
 
 
-        Retrofit retrofitForCustom = new Retrofit.Builder().baseUrl("http://192.168.1.136:5009/api/")
+        Retrofit retrofitForCustom = new Retrofit.Builder().baseUrl("http://192.168.137.1:5009/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         ApiService_usuario apiServiceUsuario = retrofitForCustom.create(ApiService_usuario.class);
